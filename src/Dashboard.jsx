@@ -6,36 +6,32 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, ArcEle
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend);
 
 const Dashboard = () => {
-  // Initial state for transactions (set to empty)
   const [transactions, setTransactions] = useState([]);
-
-  // State for balances (initialized to zero)
   const [balance, setBalance] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [showAddIncome, setShowAddIncome] = useState(false);
-  
-  // State for adding new expenses and incomes
   const [newExpense, setNewExpense] = useState({ description: '', amount: '', category: '' });
   const [newIncome, setNewIncome] = useState({ description: '', amount: '' });
-
-  // Categories for expenses
   const categories = ['Employee Salary', 'Bill Expense', 'Office Maintenance', 'Others'];
-  const [expenseData, setExpenseData] = useState([0, 0, 0, 0]);  // For the pie chart
+  const [expenseData, setExpenseData] = useState([0, 0, 0, 0]);
 
-  // Function to handle deletion of a transaction
-  const deleteTransaction = (id) => {
-    setTransactions(transactions.filter(transaction => transaction.id !== id));
+  // Reset function to clear all data
+  const handleReset = () => {
+    setTransactions([]); // Clear transactions
+    setBalance(0); // Reset balance
+    setTotalIncome(0); // Reset total income
+    setTotalExpense(0); // Reset total expenses
+    setExpenseData([0, 0, 0, 0]); // Reset Pie chart data to zero
   };
 
-  // Function to add a new expense
   const handleAddExpense = (e) => {
     e.preventDefault();
     if (newExpense.description && newExpense.amount && newExpense.category) {
       const newTransaction = {
         description: newExpense.description,
-        id: `#${Math.floor(Math.random() * 100000)}`, // Generate a random ID
+        id: `#${Math.floor(Math.random() * 100000)}`,
         category: newExpense.category,
         card: 'N/A',
         date: new Date().toLocaleString(),
@@ -44,29 +40,25 @@ const Dashboard = () => {
       };
       setTransactions([...transactions, newTransaction]);
       setShowAddExpense(false);
-      setNewExpense({ description: '', amount: '', category: '' }); // Reset the form
-
-      // Update total expense
+      setNewExpense({ description: '', amount: '', category: '' });
       setTotalExpense(prev => prev + parseFloat(newExpense.amount));
-      setBalance(prev => prev - parseFloat(newExpense.amount)); // Decrease balance
+      setBalance(prev => prev - parseFloat(newExpense.amount));
 
-      // Update Pie chart data based on category
       const updatedExpenseData = [...expenseData];
       const categoryIndex = categories.indexOf(newExpense.category);
       if (categoryIndex >= 0) {
         updatedExpenseData[categoryIndex] += parseFloat(newExpense.amount);
-        setExpenseData(updatedExpenseData);  // Update pie chart data
+        setExpenseData(updatedExpenseData);
       }
     }
   };
 
-  // Function to add a new income
   const handleAddIncome = (e) => {
     e.preventDefault();
     if (newIncome.description && newIncome.amount) {
       const newTransaction = {
         description: newIncome.description,
-        id: `#${Math.floor(Math.random() * 100000)}`, // Generate a random ID
+        id: `#${Math.floor(Math.random() * 100000)}`,
         category: 'Income',
         card: 'N/A',
         date: new Date().toLocaleString(),
@@ -75,37 +67,33 @@ const Dashboard = () => {
       };
       setTransactions([...transactions, newTransaction]);
       setShowAddIncome(false);
-      setNewIncome({ description: '', amount: '' }); // Reset the form
-
-      // Update total income
+      setNewIncome({ description: '', amount: '' });
       setTotalIncome(prev => prev + parseFloat(newIncome.amount));
-      setBalance(prev => prev + parseFloat(newIncome.amount)); // Increase balance
+      setBalance(prev => prev + parseFloat(newIncome.amount));
     }
   };
 
-  // Bar chart data for Weekly Activity
   const barData = {
     labels: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
     datasets: [
       {
         label: 'Expense',
         backgroundColor: '#007bff',
-        data: transactions.filter(t => t.type === 'Expense').map(() => Math.random() * 20000), // Random data for demo
+        data: transactions.filter(t => t.type === 'Expense').map(() => Math.random() * 20000),
       },
       {
         label: 'Income',
         backgroundColor: '#28a745',
-        data: transactions.filter(t => t.type === 'Income').map(() => Math.random() * 20000), // Random data for demo
+        data: transactions.filter(t => t.type === 'Income').map(() => Math.random() * 20000),
       }
     ]
   };
 
-  // Pie chart data for Expense Statistics
   const pieData = {
-    labels: categories, // Display the expense categories
+    labels: categories,
     datasets: [
       {
-        data: expenseData, // Dynamically updated pie chart data
+        data: expenseData,
         backgroundColor: ['#007bff', '#ff6384', '#ffcd56', '#36a2eb'],
       }
     ]
@@ -113,7 +101,6 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      {/* Main content */}
       <div className="main-content">
         <div className="top-bar">
           <button className="add-expense-btn" onClick={() => setShowAddExpense(true)}>Add Expense</button>
@@ -163,12 +150,7 @@ const Dashboard = () => {
                   <td>{transaction.date}</td>
                   <td>{transaction.amount}</td>
                   <td>
-                    <button className="delete-btn" onClick={() => deleteTransaction(transaction.id)}>Delete</button>
-                    {transaction.type === 'download' ? (
-                      <button className="download-btn">Download</button>
-                    ) : (
-                      <button className="add-receipt-btn">Add Receipt</button>
-                    )}
+                    <button className="delete-btn" onClick={() => setTransactions(transactions.filter(t => t.id !== transaction.id))}>Delete</button>
                   </td>
                 </tr>
               ))}
@@ -233,6 +215,9 @@ const Dashboard = () => {
             </form>
           </div>
         )}
+
+        {/* Reset button to clear all data */}
+        <button className="reset-btn" onClick={handleReset}>Reset All Data</button>
       </div>
     </div>
   );

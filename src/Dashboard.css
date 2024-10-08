@@ -154,4 +154,17 @@
   .add-income-modal button:hover {
     background-color: #0056b3;
   }
+  .reset-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .reset-btn:hover {
+    background-color: #c82333;
+  }
   
