@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Hook to programmatically navigate
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
+    // Handle login logic here, if needed
     console.log('Login attempted with email:', email, 'password:', password);
+
+    // For now, it will directly navigate to the dashboard after clicking sign-in
+    navigate('/dashboard');
   };
 
   return (

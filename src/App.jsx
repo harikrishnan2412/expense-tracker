@@ -6,7 +6,13 @@ import Dashboard from './Dashboard';
 
 const App = () => {
   return (
-    <Dashboard/>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
   );
 };
 
